@@ -69,11 +69,6 @@ while (<>) {
 # Append the raw MeCab output for the current sentence to fh0 (file 0)
 print $fh0 join("\n", @raw_mecab_output_sentence), "\nEOS\n";
 
-# The original script removes the first and last tokens/lemmas/pos.
-# This is usually to remove the BOS (Beginning of Sentence) and EOS (End of Sentence)
-# nodes that MeCab adds. We captured the raw output *including* BOS/EOS above,
-# but the subsequent processing in this script (and likely the next ones)
-# expects them removed, so we keep this part.
 shift @input_tokens; pop @input_tokens;
 shift @input_lemmas; pop @input_lemmas;
 shift @input_pos; pop @input_pos;
