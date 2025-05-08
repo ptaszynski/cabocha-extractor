@@ -27,7 +27,7 @@ my @input_tokenpos;
 my @input_lemmapos;
 
 
-my $mecab = MeCab::Tagger->new();#"-d/usr/lib/mecab/dic/ipadic");
+my $mecab = MeCab::Tagger->new("-d /usr/lib/x86_64-linux-gnu/mecab/dic/mecab-ipadic-neologd");
 my $node = $mecab->parseToNode($input_mecab);
 for( ; $node; $node = $node->{next} ) {
 	next unless defined $node->{surface};
