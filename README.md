@@ -1,4 +1,4 @@
-# caocha-extractor
+# cabocha-extractor
 
 [DESCRIPTION]
 
@@ -6,7 +6,7 @@ A tool for preprocessing of text data in Japanese for further machine learning. 
 
 usage:
 
-bash main.sh input_file.exe
+bash main.sh input_file.txt
 
 [DEPENDENCIES]
 
