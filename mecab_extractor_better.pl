@@ -1,8 +1,8 @@
 #!/usr/bin/perl
-#use threads;
-#use threads::shared;
-#use re::engine::RE2 -max_mem => 8<<23; #64MiB
-use utf8;
+use strict;
+use warnings;
+use utf8;                                   # source is in UTF-8
+use open ':encoding(UTF-8)', ':std';       # make STDIN/STDOUT/STDERR UTF-8
 use MeCab;
 use Encode qw(decode);
 
@@ -14,43 +14,56 @@ my $output_dir_prefix = "output/";
 open my $fh0, '>>:encoding(UTF-8)', $output_dir_prefix . "00_mecab.txt" or die "Cannot open ${output_dir_prefix}00_mecab.txt: $!";
 
 while (<>) {
-utf8::decode($_);
-my $input = $_;
-$input =~ tr/\!/！/;
-$input =~ tr/\?/？/;
-chomp $input;
-my $input_mecab = $input;
-push(@final_output, $input);
+    # Skip empty lines or lines containing only whitespace
+    next if /^\s*$/;
 
-#mecab trick.
+    my @final_output;
 
-my @input_lemmas;
-my @found_interjections;
-my @input_lemma_no_emo;
-my @input_tokens;
-my @input_pos;
-my @input_tokenpos;
-my @input_lemmapos;
+    my $input = $_;
+    $input =~ tr/\!/！/;
+    $input =~ tr/\?/？/;
+    chomp $input;
+    my $input_mecab = $input;
+    push(@final_output, $input);
+
+    #mecab trick.
+    my @input_lemmas;
+    my @found_interjections;
+    my @input_lemma_no_emo;
+    my @input_tokens;
+    my @input_pos;
+    my @input_tokenpos;
+    my @input_lemmapos;
+    my @raw_mecab_output_sentence; # store raw MeCab output for the current sentence
+
+    my $mecab = MeCab::Tagger->new("-d /usr/lib/x86_64-linux-gnu/mecab/dic/mecab-ipadic-neologd");
+    my $node = $mecab->parseToNode($input_mecab);
+    for( ; $node; $node = $node->{next} ) {
+        next unless defined $node->{surface};
+
+    # decode to Perl’s internal form
+    my $midasi_raw    = $node->{surface};
+    my $feature_raw   = $node->{feature};
+
+    # decode
+    my $midasi  = decode("UTF-8", $midasi_raw);
+    my $feature = decode("UTF-8", $feature_raw);
+
+    # now we can safely split the feature on commas, since it's Unicode
+    my ($hinsi,$kijutsu,$genkei) = (split(/,/, $feature))[0,1,6];
+
+    push @raw_mecab_output_sentence, "$midasi\t$feature";
+    push @input_tokens,  $midasi;
 
 
-my $mecab = MeCab::Tagger->new("-d /usr/lib/x86_64-linux-gnu/mecab/dic/mecab-ipadic-neologd");
-my $node = $mecab->parseToNode($input_mecab);
-for( ; $node; $node = $node->{next} ) {
-	next unless defined $node->{surface};
-	my $midasi = $node->{surface};
-	my( $hinsi, $kijutsu, $genkei ) = (split( /,/, $node->{feature} ))[0,1,6];
-	push (@input_tokens, $midasi);
-	if ($genkei eq '*'){
-		$genkei = $midasi;
-		# push (@input_lemmas, $genkei);
-	} 
-	# else {
-		# push (@input_lemmas, $genkei);
-	# }
-	push (@input_lemmas, $genkei);
-	push (@input_pos, $hinsi);
-	push (@input_tokenpos, $midasi.'|'.$hinsi);
-	push (@input_lemmapos, $genkei.'|'.$hinsi);
+        if ($genkei eq '*'){
+            $genkei = $midasi;
+        }
+
+        push (@input_lemmas, $genkei);
+        push (@input_pos, $hinsi);
+        push (@input_tokenpos, $midasi.'|'.$hinsi);
+        push (@input_lemmapos, $genkei.'|'.$hinsi);
 }
 
 # Append the raw MeCab output for the current sentence to fh0 (file 0)
