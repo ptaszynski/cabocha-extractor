@@ -4,8 +4,14 @@
 #use re::engine::RE2 -max_mem => 8<<23; #64MiB
 use utf8;
 use MeCab;
-binmode(STDOUT, ":utf8");
-binmode(STDIN, ":utf8");
+use Encode qw(decode);
+
+
+# this is where we'll save output files
+my $output_dir_prefix = "output/";
+
+# Open the raw MeCab output file in append mode
+open my $fh0, '>>:encoding(UTF-8)', $output_dir_prefix . "00_mecab.txt" or die "Cannot open ${output_dir_prefix}00_mecab.txt: $!";
 
 while (<>) {
 utf8::decode($_);
@@ -67,25 +73,34 @@ my $input_pos = join (' ', @input_pos);
 my $input_tokenpos = join (' ', @input_tokenpos);
 my $input_lemmapos = join (' ', @input_lemmapos);
 
-open(FILE_1, "+>>01_tokenized.txt") or die "Cannot open $file: $!";
-print FILE_1 "$input_tokens"."\n";
-close FILE_1;
+open(my $fh1, '>>:encoding(UTF-8)', $output_dir_prefix . "01_tokenized.txt")
+  or die "Cannot open " . $output_dir_prefix . "01_tokenized.txt: $!";
+print $fh1 "$input_tokens\n";
+close $fh1;
 
-open(FILE_2, "+>>02_lemmatized.txt") or die "Cannot open $file: $!";
-print FILE_2 "$input_lemmas"."\n";
-close FILE_2;
+open(my $fh2, '>>:encoding(UTF-8)', $output_dir_prefix . "02_lemmatized.txt")
+  or die "Cannot open " . $output_dir_prefix . "02_lemmatized.txt: $!";
+print $fh2 "$input_lemmas\n";
+close $fh2;
 
-open(FILE_3, "+>>03_pos.txt") or die "Cannot open $file: $!";
-print FILE_3 "$input_pos"."\n";
-close FILE_3;
+open(my $fh3, '>>:encoding(UTF-8)', $output_dir_prefix . "03_pos.txt")
+  or die "Cannot open " . $output_dir_prefix . "03_pos.txt: $!";
+print $fh3 "$input_pos\n";
+close $fh3;
 
-open(FILE_4, "+>>04_tokenPOS.txt") or die "Cannot open $file: $!";
-print FILE_4 "$input_tokenpos"."\n";
-close FILE_4;
+open(my $fh4, '>>:encoding(UTF-8)', $output_dir_prefix . "04_tokenPOS.txt")
+  or die "Cannot open " . $output_dir_prefix . "04_tokenPOS.txt: $!";
+print $fh4 "$input_tokenpos\n";
+close $fh4;
 
-open(FILE_5, "+>>05_lemmaPOS.txt") or die "Cannot open $file: $!";
-print FILE_5 "$input_lemmapos"."\n";
-close FILE_5;
+open(my $fh5, '>>:encoding(UTF-8)', $output_dir_prefix . "05_lemmaPOS.txt")
+  or die "Cannot open " . $output_dir_prefix . "05_lemmaPOS.txt: $!";
+print $fh5 "$input_lemmapos\n";
+close $fh5;
+
 }
+
+# Close the raw MeCab output file after processing all sentences
+close $fh0;
 
 __END__

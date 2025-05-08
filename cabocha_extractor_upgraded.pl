@@ -6,7 +6,13 @@ use utf8;
 # use MeCab; # MeCab is used in the previous script, not this one
 binmode(STDOUT, ":utf8");
 binmode(STDIN, ":utf8");
-# use Encode;
+# use Encode; # Not used in this script snippet
+
+# this is where we'll save output files
+my $output_dir_prefix = "output/";
+
+# Open the raw Cabocha output file in append mode with UTF-8 encoding
+open(FILE_0_CABOCHA, "+>>:utf8", $output_dir_prefix . "00_cabocha.txt") or die "Cannot open " . $output_dir_prefix . "00_cabocha.txt: $!";
 
 my @input_chunks;
 my @input_dependency;
@@ -208,27 +214,29 @@ foreach my $index (0 .. $#input_lemmaNER){ # Use $#array for last index
     # $_ = $_;
     # }
 
-open(FILE_1, "+>>:utf8", "06_chunks.txt") or die "Cannot open $file: $!";
+# Open and write to the output files (already in append mode)
+# Added :utf8 layer to open calls for explicit UTF-8 handling
+open(FILE_1, "+>>:utf8", $output_dir_prefix . "06_chunks.txt") or die "Cannot open " . $output_dir_prefix . "06_chunks.txt: $!";
 print FILE_1 @input_chunks;
 close FILE_1;
 
-open(FILE_2, "+>>:utf8", "07_dependency.txt") or die "Cannot open $file: $!";
+open(FILE_2, "+>>:utf8", $output_dir_prefix . "07_dependency.txt") or die "Cannot open " . $output_dir_prefix . "07_dependency.txt: $!";
 print FILE_2 @input_dependency;
 close FILE_2;
 
-open(FILE_3, "+>>:utf8", "08_chunksNER.txt") or die "Cannot open $file: $!";
+open(FILE_3, "+>>:utf8", $output_dir_prefix . "08_chunksNER.txt") or die "Cannot open " . $output_dir_prefix . "08_chunksNER.txt: $!";
 print FILE_3 @input_chunksNER;
 close FILE_3;
 
-open(FILE_4, "+>>:utf8", "09_depNER.txt") or die "Cannot open $file: $!";
+open(FILE_4, "+>>:utf8", $output_dir_prefix . "09_depNER.txt") or die "Cannot open " . $output_dir_prefix . "09_depNER.txt: $!";
 print FILE_4 @input_depNER;
 close FILE_4;
 
-open(FILE_5, "+>>:utf8", "10_tokenNER.txt") or die "Cannot open $file: $!";
+open(FILE_5, "+>>:utf8", $output_dir_prefix . "10_tokenNER.txt") or die "Cannot open " . $output_dir_prefix . "10_tokenNER.txt: $!";
 print FILE_5 @input_tokenNER;
 close FILE_5;
 
-open(FILE_6, "+>>:utf8", "11_lemmaNER.txt") or die "Cannot open $file: $!";
+open(FILE_6, "+>>:utf8", $output_dir_prefix . "11_lemmaNER.txt") or die "Cannot open " . $output_dir_prefix . "11_lemmaNER.txt: $!";
 print FILE_6 @input_lemmaNER;
 close FILE_6;
 
