@@ -10,7 +10,5 @@ bash main.sh input_file.txt
 
 [DEPENDENCIES]
 
-MeCab, MeCab Perl binding, Cabocha.
-
-# kamibocha
-Thank you for looking at this branch
+MeCab, MeCab Perl binding, Cabocha, mecab-ipadic-neologd
+Assumes neologd is present at /usr/lib/x86_64-linux-gnu/mecab/dic/mecab-ipadic-neologd
