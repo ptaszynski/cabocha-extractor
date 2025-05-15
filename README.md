@@ -1,4 +1,4 @@
-# caocha-extractor
+# cabocha-extractor
 
 [DESCRIPTION]
 
@@ -6,8 +6,10 @@ A tool for preprocessing of text data in Japanese for further machine learning. 
 
 usage:
 
-bash main.sh input_file.exe
+bash main.sh input_file.txt
 
 [DEPENDENCIES]
 
-MeCab, MeCab Perl binding, Cabocha.
+MeCab, MeCab Perl binding, Cabocha, mecab-ipadic-neologd
+
+Assumes neologd is present at /usr/lib/x86_64-linux-gnu/mecab/dic/mecab-ipadic-neologd
